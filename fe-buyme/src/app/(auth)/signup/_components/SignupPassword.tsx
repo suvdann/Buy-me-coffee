@@ -2,7 +2,6 @@
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -13,22 +12,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import * as Yup from "yup"; //
+
 type Props = {
   username: string;
 };
-// const validationSchemaLogin = Yup.object({
-//   email: Yup.string()
-//     .required()
-//     .test(
-//       "email",
-//       "Invalid email. Use a format like example@email.com",
-//       (value) => {
-//         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-//         return emailRegex.test(value);
-//       }
-//     ),
-// });
+
 export const SignupPassword = ({ username }: Props) => {
   const signUpSchema = z.object({
     email: z.string().email("Зөв имэйл хаяг оруулна уу"),
@@ -42,9 +30,9 @@ export const SignupPassword = ({ username }: Props) => {
       password: "",
     },
   });
-  const handleSubmit = (values: z.infer<typeof signUpSchema>) => {
-    console.log(values);
-  };
+  // const handleSubmit = (values: z.infer<typeof signUpSchema>) => {
+  //   console.log(values);
+  // };
   return (
     <div className="gap-2">
       <h1 className="text-[24px] font-bold">Welcome,{username}</h1>
@@ -53,7 +41,7 @@ export const SignupPassword = ({ username }: Props) => {
       </p>
 
       <Form {...form}>
-        <form className="space-y-6" onSubmit={form.handleSubmit(handleSubmit)}>
+        <form className="space-y-6">
           {/* email */}
           <FormField
             control={form.control}

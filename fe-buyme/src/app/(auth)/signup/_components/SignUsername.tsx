@@ -15,8 +15,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
-import { SignupPassword } from "./SignupPassword";
+
 type signRightProps = {
   changeHandler: () => void;
   username: string;
