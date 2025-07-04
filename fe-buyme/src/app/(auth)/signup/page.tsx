@@ -8,6 +8,8 @@ import { SignUsername } from "./_components/SignUsername";
 
 import { useState } from "react";
 import { SignupPassword } from "./_components/SignupPassword";
+import { Button } from "@/components/ui/button";
+import { redirect } from "next/navigation";
 
 const SignUpPage = () => {
   const signUpSchema = z.object({
@@ -32,12 +34,21 @@ const SignUpPage = () => {
   const Stepper = arr[index];
 
   return (
-    <div className="">
-      <Stepper
-        changeHandler={changeHandler}
-        username={username}
-        setUsername={setUsername}
-      />
+    <div className=" flex  flex-col">
+      <Button
+        variant={"outline"}
+        className="absolute top-8 right-20  rounded-md"
+        onClick={() => redirect("/login")}
+      >
+        Login
+      </Button>
+      <div className="  flex items-center justify-center">
+        <Stepper
+          changeHandler={changeHandler}
+          username={username}
+          setUsername={setUsername}
+        />
+      </div>
     </div>
   );
 };
