@@ -3,8 +3,9 @@ import { prisma } from "../../utils/prisma";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 export const login = async (req: Request, res: Response) => {
-  try {
-    const { email, password } = req.body;
+   const { email, password } = req.body;
+   try {
+   
 
     const isEmailExisted = await prisma.user.findUnique({
       where: { email },

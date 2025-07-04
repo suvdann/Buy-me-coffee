@@ -1,31 +1,38 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
-const TOKEN_SECRET = "BuyMeCoffe"; // process.env.JWT_SECRET байвал бүр сайн
+const tokenPassword = "BuyMeCoffe";
 
 export const tokenChecker = (
   request: Request,
   response: Response,
   next: NextFunction
 ) => {
-  const authHeader = request.headers.authorization;
+  const authorization = request.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return response.status(401).json({ message: "Please log in" });
+  if (!authorization) {
+    response.status(401).send({ message: "Please log in" });
+    return;
   }
 
-  const token = authHeader.split(" ")[1];
+  const token = authorization.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, TOKEN_SECRET) as { userId: number };
+    //  Token-г verify хийж, decoded payload буцаана
+    const decoded = jwt.verify(token, tokenPassword) as { userId: number };
 
-    if (!decoded || !decoded.userId) {
-      return response.status(401).json({ message: "Invalid token payload" });
+    // 👇 userId байхгүй байвал буцаана
+    if (!decoded.userId) {
+      response.status(401).send({ message: "Token is invalid" });
+      return;
     }
 
-    response.locals.userId = decoded.userId; // payload-аас авна
+    // ✅userId-г controller руу дамжуулж байна
+    response.locals.userId = decoded.userId;
+    console.log("✅ Token valid:", decoded);
     next();
-  } catch (error) {
-    return response.status(401).json({ message: "Invalid or expired token" });
+  } catch (err) {
+    console.error("JWT Error:", err);
+    response.status(401).send({ message: "Invalid or expired token" });
   }
 };

@@ -8,13 +8,14 @@ export const signUp = async (req: Request, res: Response) => {
   // if (!username || !email || !password) {
   //   return res.status(400).json({ message: "All fields are required" });
   // }
+  console.log(email,"email")
 
   try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
-
-    // if (existingUser) {
-    //   return res.status(400).json({ message: "Email already in use" });
-    // }
+console.log(email,"email")
+    if (existingUser) {
+      return res.status(400).send({ message: "Email already in use" });
+    }
     if (!existingUser) {
       const hashedPAssword = await bcrypt.hash(password, 10);
       await prisma.user.create({

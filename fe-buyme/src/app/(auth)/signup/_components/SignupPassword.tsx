@@ -35,18 +35,22 @@ export const SignupPassword = ({ username }: Props) => {
     },
   });
   const handleSubmit = async (values: z.infer<typeof signUpSchema>) => {
+    console.log(values.email, values.password);
+
     try {
-      const res = await axios.post("http://localhost:8000/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const res = await axios.post(
+        "http://localhost:8000/signup",
+        {
           username,
           email: values.email,
           password: values.password,
-        }),
-      });
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       // if (!res.ok) {
       //   const error = await res.json();

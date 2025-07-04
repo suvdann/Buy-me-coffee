@@ -17,7 +17,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-export const CompleteProfileForm = () => {
+import axios from "axios";
+type Props = {
+  changeHandler: () => void;
+};
+export const CompleteProfileForm = ({ changeHandler }: Props) => {
   const router = useRouter();
   const profileSchema = z.object({
     photo: z.any().refine((files) => files?.length === 1, "Please enter image"),
@@ -48,26 +52,26 @@ export const CompleteProfileForm = () => {
       const base64Image = reader.result;
 
       try {
-        const res = await fetch("http://localhost:8000/profile", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
+        const res = await axios.post(
+          "http://localhost:8000/profile",
+          {
             name: values.name,
             about: values.about,
             socialMediaURL: values.social,
             avatarImage: base64Image, //  хадгалах зураг
-          }),
-        });
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        const data = await res.json();
-        if (res.ok) {
-          router.push("/");
-        } else {
-          alert(data.message);
-        }
+        // if (res.ok) {
+        changeHandler();
+        // } else {
+        //   alert(data.message);
+        // }
       } catch (err) {
         console.error("Profile creation error:", err);
       }

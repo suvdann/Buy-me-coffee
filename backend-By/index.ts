@@ -14,27 +14,6 @@ app.use(cors());
 
 //("/user/:email") quire params
 
-// app.get("/user/:email", async (req: Request, res: Response) => {
-//   try {
-//     const { email } = req.body;
-//     const user = await prisma.user.findFirstOrThrow({ where: { email } });
-//     res.send({ user });
-//   } catch (err) {
-//     res.status(401).send({ message: "User is not found" });
-//   }
-// });
-
-// app.post("/createUser", async (req: Request, res: Response) => {
-//   await prisma.user.create({
-//     data: {
-//       username: "suvdaa",
-//       email: "suvdaa.gmail.com",
-//       password: "dfghj",
-//     },
-//   });
-//   res.send("success");
-// });
-// app.use(UserRouter);
 app.use(UserRouter);
 // app.use(0)
 app.listen(8000, () => {

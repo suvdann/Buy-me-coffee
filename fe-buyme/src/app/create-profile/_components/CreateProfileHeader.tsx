@@ -17,7 +17,7 @@ export const CreateProfileHeader = () => {
         className="absolute top-8 right-20  rounded-md"
         onClick={() => redirect("/login")}
       >
-        Login
+        Logout
       </Button>
     </div>
   );
