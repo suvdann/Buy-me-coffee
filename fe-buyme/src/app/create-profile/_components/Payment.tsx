@@ -1,14 +1,8 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { PaymentExpires } from "./Payment-expires";
-// import { PaymentYears } from "./Payment-year";
+
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import z from "zod";
@@ -22,13 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 import { useState } from "react";
-import { ChevronDownIcon } from "lucide-react";
+
 type Props = {
   changeHandler: () => void;
 };
@@ -74,7 +64,6 @@ const years = [
   { label: "2005" },
 ];
 export const Payment = ({ changeHandler }: Props) => {
-  const [open, setOpen] = useState(false);
   const PaymentSchema = z.object({
     expiryDate: z.enum([
       "1",
@@ -123,7 +112,6 @@ export const Payment = ({ changeHandler }: Props) => {
       "2004",
       "2005",
     ]),
-    // lastName: z.string().url("Please enter a social link"),
   });
 
   const form = useForm<z.infer<typeof PaymentSchema>>({
@@ -141,14 +129,14 @@ export const Payment = ({ changeHandler }: Props) => {
   const handleSubmit = async (values: z.infer<typeof PaymentSchema>) => {
     const token = localStorage.getItem("token");
     if (!token) return alert("Token not found");
-    console.log(values);
-    // changeHandler();
+    // console.log(values);
+
     const expiryDate = new Date(
       Number(values.years),
       Number(values.expiryDate) - 1,
       1
     );
-    console.log(values, "sdfghjkjhgfdfghj");
+
     try {
       const res = await axios.post(
         "http://localhost:8000/bankCard",
@@ -158,8 +146,6 @@ export const Payment = ({ changeHandler }: Props) => {
           expiryDate: expiryDate,
           firstName: values.firstName,
           lastName: values.lastName,
-
-          //   userId: userId,
         },
         {
           headers: {
@@ -167,17 +153,13 @@ export const Payment = ({ changeHandler }: Props) => {
           },
         }
       );
-      //   const data = await res.json();
-      // if (res.ok) {
-      //           changeHandler();
-      //         } else {
-      //           alert(data.message);
-      //         }
+
       changeHandler();
     } catch (err) {
       console.error("payment error", err);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="w-[510px]  flex flex-col gap-1">
@@ -199,7 +181,8 @@ export const Payment = ({ changeHandler }: Props) => {
                 <FormItem>
                   <FormLabel>Select country</FormLabel>
                   <FormControl>
-                    <select {...field} className="">
+                    <select {...field} className="border rounded-md h-[40px]">
+                      <option value="">select</option>
                       {countries.map((countries) => (
                         <option key={countries.value} value={countries.value}>
                           {countries.label}
@@ -271,15 +254,18 @@ export const Payment = ({ changeHandler }: Props) => {
                 </FormItem>
               )}
             />
-            <div className="flex">
+            <div className="flex justify-between">
               <FormField
                 control={form.control}
                 name="expiryDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="">
                     <FormLabel>Expires</FormLabel>
-                    <FormControl>
-                      <select {...field} className="">
+                    <FormControl className=" ">
+                      <select
+                        {...field}
+                        className="border rounded-md w-[159px] h-[36px] "
+                      >
                         <option>month</option>
                         {months.map((month) => (
                           <option key={month.value} value={month.value}>
@@ -300,7 +286,10 @@ export const Payment = ({ changeHandler }: Props) => {
                   <FormItem>
                     <FormLabel>years</FormLabel>
                     <FormControl>
-                      <select {...field} className="">
+                      <select
+                        {...field}
+                        className="border rounded-md w-[159px] h-[36px]  "
+                      >
                         <option>years</option>
                         {years.map((years) => (
                           <option key={years.label} value={years.label}>

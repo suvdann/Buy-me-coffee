@@ -33,36 +33,19 @@ export const AuthContext = createContext<AuthContextType>(
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
-  // const tokenChecker = async (token: string) => {
-  //   try {
-  //     console.log("Working");
-  //     const response = await axios.post("http://localhost:8000/verify", {
-  //       token: token,
-  //     });
-  //     // const user = response.data.user;
-  //     setUser({
-  //       user,
-  //       userId: response.data.destructToken.userId,
-  //       profile: user?.profile ?? null,
-  //       // isAdmin: response.data.destructToken.isAdmin,
-  //     });
-  //   } catch (err) {
-  //     localStorage.removeItem("token");
-  //     router.push("/login");
-  //   }
-  // };
+
   const tokenChecker = async (token: string) => {
     try {
-      console.log("Working");
       const response = await axios.post("http://localhost:8000/verify", {
         token: token,
       });
 
-      const user = response.data.user; // 👉 энэ байх ёстой
+      const user = response.data.user;
       const userId = response.data.destructToken.userId;
-
+      console.log(response.data.user, "test");
       setUser({
-        userId,
+        // userId,
+        userId: response.data.destructToken.userId,
         isAdmin: response.data.destructToken.isAdmin ?? false,
         profile: user?.profile ?? null,
       });
@@ -71,6 +54,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       router.push("/login");
     }
   };
+  // const logOut = () => {
+  //   localStorage.removeItem("token");
+  //   setUser({ userId: null });
+  // };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
