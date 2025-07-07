@@ -4,9 +4,9 @@ import Link from "next/link";
 
 export const HomeSidebar = () => {
   return (
-    <div className=" px-20 ">
-      <div className="flex flex-col   w-[251px]">
-        <Link href={"/home/dashboard"}>
+    <div className=" ml-[30px]">
+      <div className="flex flex-col w-[251px] h-screen">
+        <Link href={"/"}>
           <Button variant={"ghost"} className="justify-start w-full ">
             Home
           </Button>

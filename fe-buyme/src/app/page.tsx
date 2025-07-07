@@ -1,12 +1,16 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { HomeSidebar } from "./_components/sidebar";
-import { Header } from "./_components/Header";
+import { Header } from "./home/Header";
+import Dashboard from "./_components/dashboard";
 
 const Home = () => {
   return (
-    <div>
-      <HomeSidebar />
+    <div className="flex">
+      <div className=" ">
+        <HomeSidebar />
+      </div>
+      <Dashboard />
     </div>
   );
 };
