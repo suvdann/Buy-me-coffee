@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
       const user = response.data.user;
       const userId = response.data.destructToken.userId;
-      console.log(response.data.user, "test");
+      // console.log(response.data.user, "test");
       setUser({
         // userId,
         userId: response.data.destructToken.userId,

@@ -39,9 +39,8 @@ const Dashboard = () => {
             <option value="" className="">
               Last 30 days
             </option>
-            <option value="apple">Apple</option>
-            <option value="banana">Banana</option>
-            <option value="orange">Orange</option>
+            <option value="Last 90 days">Last 90 days</option>
+            <option value="All time ">All time </option>
           </select>
         </div>
       </Card>

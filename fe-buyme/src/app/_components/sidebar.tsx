@@ -11,12 +11,12 @@ export const HomeSidebar = () => {
             Home
           </Button>
         </Link>
-        <Link href={"/home/explore"}>
+        <Link href={"/explore"}>
           <Button variant={"ghost"} className="justify-start w-full">
             Explore
           </Button>
         </Link>
-        <Link href={"/home/viewPage"}>
+        <Link href={"/view"}>
           <Button
             variant={"ghost"}
             className="flex justify-start w-full  items-center ml-1 "
@@ -25,7 +25,7 @@ export const HomeSidebar = () => {
             <ExternalLink className="w-[4px] " />
           </Button>
         </Link>
-        <Link href={"/home/settings"}>
+        <Link href={"/settings"}>
           <Button variant={"ghost"} className="justify-start w-[250px]">
             Account Settings
           </Button>

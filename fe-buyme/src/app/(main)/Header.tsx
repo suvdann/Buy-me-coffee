@@ -9,7 +9,7 @@ import { useAuth } from "../_components/UserProvider";
 export const Header = () => {
   const user = useAuth();
   return (
-    <div className="w-full h-[80px]">
+    <div className="w-full h-[56px]">
       <div className="flex justify-between ml-[80px] mt-[16px] mr-[80px]">
         <img src={"/Logo.png"} alt="logo" className="w-[151px] h-[24px]" />
 
