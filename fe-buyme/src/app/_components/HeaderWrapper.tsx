@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Header } from "@/app/(main)/Header";
+import { Header } from "@/app/_components/Header";
 
 export function HeaderWrapper() {
   const pathname = usePathname();

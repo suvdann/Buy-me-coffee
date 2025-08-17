@@ -4,14 +4,17 @@ import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { PopoverContent } from "@radix-ui/react-popover";
 import { ChevronDown } from "lucide-react";
 import Image from "next/image";
-import { useAuth } from "../_components/UserProvider";
+import { useAuth } from "./UserProvider";
+import { redirect } from "next/navigation";
 
 export const Header = () => {
   const user = useAuth();
   return (
     <div className="w-full h-[56px]">
       <div className="flex justify-between ml-[80px] mt-[16px] mr-[80px]">
-        <img src={"/Logo.png"} alt="logo" className="w-[151px] h-[24px]" />
+        <Button variant={"link"} onClick={() => redirect("/")}>
+          <img src={"/Logo.png"} alt="logo" className="w-[151px] h-[24px]" />
+        </Button>
 
         <Popover>
           <PopoverTrigger className="w-[187px] flex justify-between">

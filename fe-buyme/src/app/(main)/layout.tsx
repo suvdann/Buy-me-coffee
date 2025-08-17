@@ -1,5 +1,5 @@
 import { HomeSidebar } from "../_components/sidebar";
-import { Header } from "./Header";
+import { Header } from "../_components/Header";
 
 export default function Authlayout({
   children,

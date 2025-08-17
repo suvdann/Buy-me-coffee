@@ -1,5 +1,6 @@
 // import "./globals.css";
 import Image from "next/image";
+import { LoginHome } from "./page";
 
 export default function Authlayout({
   children,

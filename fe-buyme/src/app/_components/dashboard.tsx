@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import { useAuth } from "@/app/_components/UserProvider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import { prisma } from "./utils/prisma";
 import { UserRouter } from "./router/user.router";
+import { DonationRouter } from "./router/donation.router";
 dotenv.config();
 const app = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use(cors());
 //("/user/:email") quire params
 
 app.use(UserRouter);
+app.use(DonationRouter);
 // app.use(0)
 app.listen(8000, () => {
   console.log("Server is running on port 8000");

@@ -1,75 +1,102 @@
 "use client";
-import { redirect, useRouter } from "next/navigation";
+
+import axios from "axios";
 import {
-  Children,
   createContext,
-  PropsWithChildren,
   useContext,
   useEffect,
+  useMemo,
   useState,
+  PropsWithChildren,
 } from "react";
-import axios from "axios";
+
+type Profile = {
+  id: number;
+  name: string;
+  about: string;
+  avatarImage: string;
+  socialMediaURL: string;
+};
 
 type UserData = {
   userId: string | null;
   isAdmin: boolean;
-  profile: null | {
-    id: number;
-    name: string;
-    about: string;
-    avatarImage: string;
-    socialMediaURL: string;
-  };
+  profile: Profile | null;
 };
 
 type AuthContextType = {
   user: UserData | null;
-  tokenChecker: (_token: string) => Promise<void>;
-  // logOut: () => void;
+  token: string | null; // ← нэмж өглөө
+  authReady: boolean; // ← нэмж өглөө (анхны ачаалал дууссан эсэх)
+  tokenChecker: (token: string) => Promise<void>; // таны verify-г үргэлжлүүлнэ
+  login: (token: string) => Promise<void>; // login хийсний дараа дуудах
+  logout: () => void; // гарах
 };
+
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
 );
+
 export const AuthProvider = ({ children }: PropsWithChildren) => {
-  const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+  const [authReady, setAuthReady] = useState(false);
 
-  const tokenChecker = async (token: string) => {
-    try {
-      const response = await axios.post("http://localhost:8000/verify", {
-        token: token,
-      });
+  // Та одоогоор body-р token явуулж байгаа тул хэвээр нь үлдээв
+  const tokenChecker = async (rawToken: string) => {
+    const res = await axios.post("http://localhost:8000/verify", {
+      token: rawToken,
+    });
 
-      const user = response.data.user;
-      const userId = response.data.destructToken.userId;
-      // console.log(response.data.user, "test");
-      setUser({
-        // userId,
-        userId: response.data.destructToken.userId,
-        isAdmin: response.data.destructToken.isAdmin ?? false,
-        profile: user?.profile ?? null,
-      });
-    } catch (err) {
-      localStorage.removeItem("token");
-      router.push("/login");
-    }
+    const u = res.data?.user;
+    const destruct = res.data?.destructToken || {};
+    setUser({
+      userId: destruct.userId ?? null,
+      isAdmin: !!destruct.isAdmin,
+      profile: u?.profile ?? null,
+    });
   };
-  // const logOut = () => {
-  //   localStorage.removeItem("token");
-  //   setUser({ userId: null });
-  // };
 
+  const login = async (rawToken: string) => {
+    // token хадгалж, дараа нь verify хийж user state-ээ шинэчилнэ
+    setToken(rawToken);
+    localStorage.setItem("token", rawToken);
+    await tokenChecker(rawToken);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("token");
+  };
+
+  // App нээгдэхэд localStorage-с сэргээх
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      tokenChecker(token);
-    }
+    const init = async () => {
+      try {
+        const saved = localStorage.getItem("token");
+        if (saved) {
+          setToken(saved);
+          await tokenChecker(saved);
+        }
+      } catch {
+        // verify амжилтгүй бол бүхнийг цэвэрлэнэ
+        logout();
+      } finally {
+        setAuthReady(true);
+      }
+    };
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  return (
-    <AuthContext.Provider value={{ user, tokenChecker }}>
-      {children}
-    </AuthContext.Provider>
+
+  // value-г тогтвортой байлгах
+  const value = useMemo<AuthContextType>(
+    () => ({ user, token, authReady, tokenChecker, login, logout }),
+    [user, token, authReady]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
-export const useAuth = () => useContext<AuthContextType>(AuthContext);
-//login hiisnii daraa buh huudsuud user iin medeeliig hadgalah heregtei
+
+export const useAuth = () => useContext(AuthContext);

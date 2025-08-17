@@ -1,90 +1,158 @@
 "use client";
+import { useAuth } from "@/app/_components/UserProvider";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
-
-import { ExternalLink, Search, User } from "lucide-react";
+import { Coffee, CheckCircle } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { QRDialog } from "./QR";
+import { toast } from "sonner";
+type UserProfile = {
+  id: string;
+  email: string;
+  name: string;
+  avatarImage: string;
+  about: string;
+  socialMediaURL: string;
+};
 
-const ExplorePage = () => {
-  const [users, setUsers] = useState<any[]>([]);
-  const alluser = async () => {
+export default function ExplorePage() {
+  const { user, token } = useAuth();
+  const params = useParams();
+  const router = useRouter();
+  const userId = params.userId;
+
+  const [userData, setUserData] = useState<UserProfile | null>(null);
+  const [amount, setAmount] = useState(1);
+  const [message, setMessage] = useState("");
+  const [socialURL, setSocialURL] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8000/user/${userId}`);
+        setUserData(res.data.user);
+        console.log(setUserData);
+      } catch (error) {
+        console.error("Алдаа гарлаа:", error);
+      }
+    };
+    if (userId) fetchUser();
+  }, [userId]);
+
+  const handleDonation = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/users");
-      setUsers(res.data.user); //irsen datagaa end hadgalan
-      console.log("yu irej baina", res.data.user);
-    } catch (error) {
-      console.error("aldaa garsan:", error);
+      const res = await axios.post(
+        "http://localhost:8000/createDonation",
+        {
+          amount,
+          specialMessage: message,
+          socialURLOrBuyMeACoffee: socialURL,
+          donorId: user?.userId,
+          recipientId: Number(userId),
+        },
+
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success("Donation амжилттай илгээгдлээ!", {
+        icon: "🎉",
+        duration: 5000,
+        style: { background: "#ffeb3b", color: "#222" },
+      });
+    } catch (err) {
+      console.error("Donation алдаа:", err);
+      return "";
     }
   };
 
-  useEffect(() => {
-    alluser();
-  }, []);
-
   return (
-    <div className="w-[957px] flex flex-col gap-8">
-      <h1 className="text-[20px] font-bold">Explore creators</h1>
-
-      <div className="flex justify-center items-center border w-[243px] rounded-lg bg-white">
-        <Search className="w-4 h-4 text-gray-400" />
-        <Input
-          placeholder=" Search name"
-          className=" border-none focus:outline-none p-0 focus-visible:ring-0 focus-visible:outline-none"
-        />
-      </div>
-      {/* {users.map((user: any) => (
-          <div
-            key={user.id}
-            className="border p-3 rounded-md shadow-sm bg-white"
-          >
-            <p className="font-semibold">Нэр: {user.name}</p>
-            <p>Email: {user.email}</p>
+    <div className="absolute top-[270px] left-1/2 transform -translate-x-1/2 flex gap-6 px-4 max-w-[1320px]">
+      <div className="w-[632px] h-[625px] flex flex-col gap-5">
+        <Card className="p-5">
+          <div className="flex gap-3 border-b pb-4">
+            <img
+              src={userData?.avatarImage}
+              alt="zurag"
+              className="rounded-full border w-[48px] h-[48px]"
+            />
+            <div>
+              <h1 className="text-[16px] font-bold">{userData?.name}</h1>
+              <p>{userData?.email}</p>
+            </div>
           </div>
-        ))} */}
-      {users.length === 0 ? (
-        <div className="flex flex-col">
-          <User />
-          <p>No creators have signed up yet</p>
-        </div>
-      ) : (
-        users.map((user: any) => (
-          <Card className="w-[909px] p-6 " key={user.id}>
-            <div className="flex justify-between">
-              <div className="flex gap-[12px] items-center">
-                <img
-                  src={user.avatarImage}
-                  alt="photo"
-                  className="border rounded-full w-[40px] h-[40px]"
-                />
-                <p className="text-[20px] font-semibold">{user.name}</p>
-              </div>
-              <Button
-                variant={"outline"}
-                className="w-[136px] h-[40px] bg-[#F4F4F5]"
-              >
-                View profile <ExternalLink className="w-[4px] " />
-              </Button>
+          <Label>About...</Label>
+          <p>{userData?.about}</p>
+        </Card>
+        <Card className="p-5">
+          <h1 className="text-[16px] font-semibold">Social media URL</h1>
+          <p>{userData?.socialMediaURL}</p>
+        </Card>
+        <Card className="p-5">
+          <h1 className="text-[16px] font-semibold">Recent Supporters</h1>
+          <p>coming soon...</p>
+        </Card>
+      </div>
+
+      <div className="w-[628px]">
+        <Card className="p-6 flex flex-col gap-4">
+          <h1 className="text-[24px] font-semibold">
+            Buy {userData?.name} a Coffee
+          </h1>
+
+          <div>
+            <p>Select amount:</p>
+            <div className="flex gap-3">
+              {[1, 2, 5, 10].map((price) => (
+                <Button
+                  key={price}
+                  variant="outline"
+                  className={`w-[72px] h-[40px] ${
+                    amount === price ? "bg-black text-white" : "bg-[#F4F4F5]"
+                  }`}
+                  onClick={() => setAmount(price)}
+                >
+                  <Coffee />
+                  {price}$
+                </Button>
+              ))}
             </div>
-            <div className="flex gap-5 ">
-              <div className="w-[420px]">
-                {" "}
-                <Label>About {user.name}</Label>
-                <p>{user.about}</p>
-              </div>
-              <div className="w-[420px]">
-                {" "}
-                <Label>Social media URL</Label>
-                <p className="text-[14px]"></p>
-              </div>
-            </div>
-          </Card>
-        ))
-      )}
+          </div>
+
+          <div>
+            <Label>BuyMeCoffee or social URL:</Label>
+            <Input
+              placeholder="buymeacoffee.com/"
+              value={socialURL}
+              onChange={(e) => setSocialURL(e.target.value)}
+            />
+          </div>
+
+          <div>
+            <Label>Special message:</Label>
+            <Input
+              placeholder="Please write your message here"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </div>
+          <QRDialog
+            donorId={user?.userId}
+            recipientId={Number(userId)}
+            amount={amount}
+            message={message}
+            socialURL={socialURL}
+            handleDonation={handleDonation}
+          />
+        </Card>
+      </div>
     </div>
   );
-};
-export default ExplorePage;
+}
